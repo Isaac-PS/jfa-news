@@ -1,4 +1,4 @@
-// Criação de DOM sem innerHTML: todo texto entra como nó de texto (seguro contra injeção de HTML).
+// Criação de DOM segura: todo texto entra como nó de texto, nunca como HTML.
 
 export function el(tag, props = {}, ...filhos) {
   const no = document.createElement(tag);

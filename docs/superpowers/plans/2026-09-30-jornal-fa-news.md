@@ -72,7 +72,7 @@
 ```powershell
 git init -b main
 if (-not (git config user.name)) { git config user.name "Isaac Paiva" }
-if (-not (git config user.email)) { git config user.email "isaacpaivass@gmail.com" }
+if (-not (git config user.email)) { git config user.email "seu-email@exemplo.com" }
 New-Item -ItemType File -Path .nojekyll | Out-Null
 ```
 
