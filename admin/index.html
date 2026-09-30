@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Painel · Jornal FA News</title>
+  <link rel="icon" type="image/png" href="../assets/icone.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/admin.css">
+</head>
+<body class="admin" data-pagina="admin">
+  <header class="admin__topo">
+    <div class="container">
+      <div class="admin__marca">
+        <img src="../assets/logo-jornal.png" alt="Jornal FA News">
+        <strong>Painel administrativo</strong>
+      </div>
+      <button class="botao botao--contorno botao--pequeno" type="button" id="botao-sair" hidden>Sair</button>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="mensagem-area" id="mensagem" role="status" aria-live="polite"></div>
+
+    <section class="painel" id="tela-login">
+      <h1>Entrar</h1>
+      <p class="painel__ajuda">
+        Cole o token de acesso do GitHub. Ele fica guardado só neste navegador e nunca vai para o site.
+        O passo a passo para gerar o token está no arquivo README do projeto.
+      </p>
+      <form id="form-login" autocomplete="off">
+        <div class="campo">
+          <label for="campo-token">Token de acesso</label>
+          <input type="password" id="campo-token" autocomplete="off" spellcheck="false" required>
+        </div>
+        <div class="campo campo--linha">
+          <input type="checkbox" id="campo-lembrar">
+          <label for="campo-lembrar">Lembrar neste dispositivo</label>
+        </div>
+        <div class="linha-acoes">
+          <button class="botao botao--azul" type="submit" id="botao-entrar">Entrar</button>
+        </div>
+      </form>
+    </section>
+
+    <section class="painel painel--largo" id="tela-lista" hidden>
+      <div class="painel__cabeca">
+        <h1>Notícias</h1>
+        <button class="botao botao--azul" type="button" id="botao-nova">Nova notícia</button>
+      </div>
+      <ul class="lista-admin" id="lista-admin"></ul>
+    </section>
+
+    <section class="painel" id="tela-form" hidden>
+      <h1 id="titulo-formulario">Nova notícia</h1>
+      <form id="form-noticia" novalidate>
+        <div class="campo">
+          <label for="campo-titulo">Título</label>
+          <input type="text" id="campo-titulo" maxlength="200">
+        </div>
+        <div class="campo">
+          <label for="campo-autor">Autor</label>
+          <input type="text" id="campo-autor" maxlength="120">
+        </div>
+        <div class="campo">
+          <label for="campo-data">Data</label>
+          <input type="date" id="campo-data">
+        </div>
+        <div class="campo">
+          <label for="campo-resumo">Resumo (opcional)</label>
+          <textarea id="campo-resumo" rows="3"></textarea>
+          <span class="contador" id="contador-resumo" aria-live="polite">0/160</span>
+          <small>Aparece no cartão da notícia. Se ficar em branco, usamos o início do texto.</small>
+        </div>
+        <div class="campo">
+          <label for="campo-texto">Texto</label>
+          <textarea id="campo-texto" class="campo__texto"></textarea>
+          <small>Deixe uma linha em branco entre um parágrafo e outro.</small>
+        </div>
+        <div class="campo">
+          <label for="campo-imagem">Imagem de capa (opcional)</label>
+          <input type="file" id="campo-imagem" accept="image/jpeg,image/png,image/webp">
+          <small>JPG, PNG ou WebP. A imagem é reduzida automaticamente antes de ser enviada.</small>
+          <img class="previa-imagem" id="previa-imagem" alt="Prévia da imagem escolhida" hidden>
+        </div>
+        <div class="campo campo--linha" id="grupo-remover-imagem" hidden>
+          <input type="checkbox" id="campo-remover-imagem">
+          <label for="campo-remover-imagem">Remover a imagem atual</label>
+        </div>
+        <div class="linha-acoes">
+          <button class="botao botao--azul" type="submit" id="botao-publicar">Publicar</button>
+          <button class="botao botao--contorno" type="button" id="botao-cancelar">Cancelar</button>
+        </div>
+      </form>
+    </section>
+  </main>
+
+  <script type="module" src="../js/admin.js"></script>
+</body>
+</html>
