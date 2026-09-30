@@ -4,6 +4,7 @@ export function formatarData(iso) {
   if (!DATA_ISO.test(iso ?? '')) return '';
   const data = new Date(`${iso}T00:00:00Z`);
   if (Number.isNaN(data.getTime())) return '';
+  if (data.toISOString().slice(0, 10) !== iso) return '';
   return new Intl.DateTimeFormat('pt-BR', {
     day: 'numeric',
     month: 'long',
@@ -32,6 +33,8 @@ export function imagemValida(caminho, pasta = 'assets/noticias/') {
     typeof caminho === 'string' &&
     caminho.startsWith(pasta) &&
     !caminho.includes('..') &&
+    !caminho.includes('%') &&
+    !caminho.includes('\\') &&
     /\.(jpe?g|png|webp)$/i.test(caminho)
   );
 }

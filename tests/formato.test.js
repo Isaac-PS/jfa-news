@@ -19,6 +19,8 @@ test('formatarData devolve vazio para valores inválidos', () => {
   assert.equal(formatarData('30/09/2026'), '');
   assert.equal(formatarData(undefined), '');
   assert.equal(formatarData('2026-13-40'), '');
+  assert.equal(formatarData('2026-02-30'), '');
+  assert.equal(formatarData('2026-04-31'), '');
 });
 
 test('iniciais usa o primeiro e o último nome', () => {
@@ -47,6 +49,8 @@ test('imagemValida aceita só imagens dentro da pasta esperada', () => {
   assert.equal(imagemValida('assets/noticias/a.gif'), false);
   assert.equal(imagemValida('assets/noticias/a.jpg?x=1'), false);
   assert.equal(imagemValida(null), false);
+  assert.equal(imagemValida('assets/noticias/%2e%2e/%2e%2e/a.jpg'), false);
+  assert.equal(imagemValida('assets/noticias\\a.jpg'), false);
 });
 
 test('resumoOuInicio usa o resumo quando existe', () => {
