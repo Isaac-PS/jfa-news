@@ -54,4 +54,5 @@ test('config.json tem os contatos e links definidos na especificação', async (
   assert.ok(config.email.includes('@'));
   assert.ok(config.mensagemPatrocinio.length > 0);
   assert.ok(config.github.owner && config.github.repo && config.github.branch);
+  assert.equal('apiUrl' in config.github, false);
 });

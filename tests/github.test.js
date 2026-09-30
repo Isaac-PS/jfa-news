@@ -157,3 +157,28 @@ test('apiUrl personalizada é respeitada', async () => {
   await novoCliente(fetchFalso, { apiUrl: 'http://localhost:4010' }).validarAcesso();
   assert.equal(fetchFalso.chamadas[0].url, 'http://localhost:4010/repos/dono/repo');
 });
+
+test('PUT com erro 500 não é repetido e vira erro desconhecido', async () => {
+  const fetchFalso = criarFetchFalso(({ metodo }) =>
+    metodo === 'GET' ? arquivoRemoto({ noticias: [] }, 'sha') : { status: 500, corpo: {} },
+  );
+  await assert.rejects(
+    novoCliente(fetchFalso).atualizarJson('data/noticias.json', (dados) => dados, 'msg'),
+    (erro) => erro instanceof ErroGitHub && erro.tipo === 'desconhecido' && erro.status === 500,
+  );
+  assert.equal(fetchFalso.chamadas.filter((c) => c.metodo === 'PUT').length, 1);
+});
+
+test('403 é erro de token e 422 é conflito', async () => {
+  const com = (status) => novoCliente(criarFetchFalso(() => ({ status, corpo: {} })));
+  await assert.rejects(com(403).validarAcesso(), (erro) => erro instanceof ErroGitHub && erro.tipo === 'token' && erro.status === 403);
+  await assert.rejects(com(422).validarAcesso(), (erro) => erro instanceof ErroGitHub && erro.tipo === 'conflito' && erro.status === 422);
+});
+
+test('apagarArquivo envia o branch no corpo do DELETE', async () => {
+  const fetchFalso = criarFetchFalso(({ metodo }) =>
+    metodo === 'GET' ? { status: 200, corpo: { sha: 's9' } } : { status: 200, corpo: {} },
+  );
+  await novoCliente(fetchFalso).apagarArquivo('assets/noticias/x.jpg', 'Remove');
+  assert.equal(fetchFalso.chamadas.find((c) => c.metodo === 'DELETE').corpo.branch, 'main');
+});

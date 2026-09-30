@@ -50,7 +50,7 @@ test('imagemValida aceita só imagens dentro da pasta esperada', () => {
   assert.equal(imagemValida('assets/noticias/a.jpg?x=1'), false);
   assert.equal(imagemValida(null), false);
   assert.equal(imagemValida('assets/noticias/%2e%2e/%2e%2e/a.jpg'), false);
-  assert.equal(imagemValida('assets/noticias\\a.jpg'), false);
+  assert.equal(imagemValida('assets/noticias/sub\\a.jpg'), false);
 });
 
 test('resumoOuInicio usa o resumo quando existe', () => {

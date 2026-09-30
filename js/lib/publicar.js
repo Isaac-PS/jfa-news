@@ -1,5 +1,6 @@
 import { gerarId } from './slug.js';
 import { validar, buscar, criarNoticia, editarNoticia, excluirNoticia } from './modelo.js';
+import { imagemValida } from './formato.js';
 
 export const CAMINHO_JSON = 'data/noticias.json';
 export const PASTA_IMAGENS = 'assets/noticias/';
@@ -45,7 +46,8 @@ export async function publicarNoticia({ cliente, dados, id = null, imagemBase64 
 
   const avisos = [];
   const imagemAntiga = existente?.imagem;
-  if (imagemAntiga && imagemAntiga !== imagem) {
+  // O caminho vem do JSON do repositório: só apaga arquivo dentro da pasta de imagens das notícias.
+  if (imagemAntiga && imagemAntiga !== imagem && imagemValida(imagemAntiga, PASTA_IMAGENS)) {
     try {
       await cliente.apagarArquivo(imagemAntiga, `Remove imagem antiga da notícia ${idFinal}`);
     } catch {
@@ -67,7 +69,7 @@ export async function excluirNoticiaPublicada({ cliente, id }) {
   );
 
   const avisos = [];
-  if (existente.imagem) {
+  if (existente.imagem && imagemValida(existente.imagem, PASTA_IMAGENS)) {
     try {
       await cliente.apagarArquivo(existente.imagem, `Remove imagem da notícia ${id}`);
     } catch {

@@ -4,7 +4,8 @@ import { publicarNoticia, excluirNoticiaPublicada, ErroValidacao } from '../js/l
 
 const dados = { titulo: 'Título X', autor: 'Equipe', data: '2026-09-30', resumo: 'Resumo', texto: 'Texto' };
 
-function criarClienteFalso({ noticias = [], falhar = {} } = {}) {
+// `antesDeMutar(estado)` roda dentro de atualizarJson, antes da mudança: simula outra pessoa alterando o JSON.
+function criarClienteFalso({ noticias = [], falhar = {}, antesDeMutar = null } = {}) {
   const estado = { json: { noticias: structuredClone(noticias) }, arquivos: new Map(), apagados: [], chamadas: [] };
   return {
     estado,
@@ -15,6 +16,7 @@ function criarClienteFalso({ noticias = [], falhar = {} } = {}) {
     async atualizarJson(caminho, mutar) {
       estado.chamadas.push('atualizarJson');
       if (falhar.atualizarJson) throw falhar.atualizarJson;
+      if (antesDeMutar) antesDeMutar(estado);
       estado.json = mutar(structuredClone(estado.json));
       return estado.json;
     },
@@ -133,4 +135,61 @@ test('excluir notícia inexistente falha sem gravar', async () => {
   const cliente = criarClienteFalso();
   await assert.rejects(excluirNoticiaPublicada({ cliente, id: 'x' }), /não existe mais/);
   assert.ok(!cliente.estado.chamadas.includes('atualizarJson'));
+});
+
+// ===== Nunca apagar arquivo fora de assets/noticias/ =====
+test('editar removendo a imagem não apaga arquivo fora da pasta de notícias', async () => {
+  const cliente = criarClienteFalso({ noticias: [{ id: 'x', ...dados, imagem: 'assets/logo-jornal.png' }] });
+  const resultado = await publicarNoticia({ cliente, id: 'x', dados, removerImagem: true });
+  assert.deepEqual(resultado.avisos, []);
+  assert.equal(cliente.estado.json.noticias[0].imagem, null);
+  assert.deepEqual(cliente.estado.apagados, []);
+  assert.ok(!cliente.estado.chamadas.includes('apagarArquivo'));
+});
+
+test('excluir notícia cuja imagem está fora da pasta de notícias não apaga o arquivo', async () => {
+  const cliente = criarClienteFalso({ noticias: [{ id: 'x', ...dados, imagem: 'assets/logo-jornal.png' }] });
+  const resultado = await excluirNoticiaPublicada({ cliente, id: 'x' });
+  assert.deepEqual(resultado.avisos, []);
+  assert.deepEqual(cliente.estado.json.noticias, []);
+  assert.deepEqual(cliente.estado.apagados, []);
+  assert.ok(!cliente.estado.chamadas.includes('apagarArquivo'));
+});
+
+// ===== Casos de borda da publicação =====
+test('editar com falha ao gravar o JSON não apaga a imagem antiga', async () => {
+  const cliente = criarClienteFalso({
+    noticias: [{ id: 'x', ...dados, imagem: 'assets/noticias/x.jpg' }],
+    falhar: { atualizarJson: new Error('falhou') },
+  });
+  await assert.rejects(publicarNoticia({ cliente, id: 'x', dados, removerImagem: true }), /falhou/);
+  assert.deepEqual(cliente.estado.apagados, []);
+  assert.ok(!cliente.estado.chamadas.includes('apagarArquivo'));
+});
+
+test('nova imagem vence "remover imagem" quando os dois vêm juntos', async () => {
+  const cliente = criarClienteFalso({ noticias: [{ id: 'x', ...dados, imagem: 'assets/noticias/x.jpg' }] });
+  await publicarNoticia({ cliente, id: 'x', dados, imagemBase64: 'NOVA', removerImagem: true });
+  assert.equal(cliente.estado.json.noticias[0].imagem, 'assets/noticias/x.jpg');
+  assert.equal(cliente.estado.arquivos.get('assets/noticias/x.jpg'), 'NOVA');
+  assert.deepEqual(cliente.estado.apagados, []);
+});
+
+test('a gravação parte da lista mais recente, sem perder notícia publicada por outra pessoa', async () => {
+  const concorrente = { id: 'outra', ...dados, titulo: 'Outra notícia', imagem: null };
+  const cliente = criarClienteFalso({
+    antesDeMutar: (estado) => estado.json.noticias.push(concorrente),
+  });
+  await publicarNoticia({ cliente, dados });
+  assert.deepEqual(cliente.estado.json.noticias.map((n) => n.id).sort(), ['2026-09-30-titulo-x', 'outra']);
+});
+
+test('excluir: falha ao apagar a imagem vira aviso e a notícia sai do JSON', async () => {
+  const cliente = criarClienteFalso({
+    noticias: [{ id: 'x', ...dados, imagem: 'assets/noticias/x.jpg' }],
+    falhar: { apagarArquivo: new Error('rede') },
+  });
+  const resultado = await excluirNoticiaPublicada({ cliente, id: 'x' });
+  assert.equal(resultado.avisos.length, 1);
+  assert.deepEqual(cliente.estado.json.noticias, []);
 });

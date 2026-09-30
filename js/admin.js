@@ -3,7 +3,7 @@ import { criarClienteGitHub, ErroGitHub } from './lib/github.js';
 import { ordenar, buscar, LIMITE_RESUMO } from './lib/modelo.js';
 import { publicarNoticia, excluirNoticiaPublicada, ErroValidacao, CAMINHO_JSON } from './lib/publicar.js';
 import { prepararImagem, validarArquivoImagem } from './lib/imagem.js';
-import { formatarData, dataIsoLocal } from './lib/formato.js';
+import { formatarData, dataIsoLocal, imagemValida } from './lib/formato.js';
 import { el, montar } from './lib/dom.js';
 
 const CHAVE_TOKEN = 'fa-news-token';
@@ -17,6 +17,10 @@ let cliente = null;
 let lista = [];
 let editandoId = null;
 let imagemPreparada = null; // { base64, previaUrl } da imagem escolhida no formulário
+let geracaoImagem = 0; // muda a cada escolha de imagem: descarta resultado de preparo que ficou velho
+let preparandoImagem = false; // true enquanto a imagem escolhida está sendo reduzida
+let publicando = false; // true enquanto o envio ao GitHub está em andamento
+let retomarFormulario = false; // após token recusado ao publicar, o próximo login volta ao formulário
 
 // ===== Token =====
 function lerToken() {
@@ -28,6 +32,7 @@ function lerToken() {
 }
 
 function guardarToken(token, lembrar) {
+  apagarToken(); // um token velho no outro armazenamento venceria o novo em lerToken()
   try {
     (lembrar ? localStorage : sessionStorage).setItem(CHAVE_TOKEN, token);
   } catch {
@@ -67,14 +72,14 @@ function textoDoErro(erro) {
   return erro?.message || 'Algo deu errado. Tente de novo.';
 }
 
-function tratarErro(erro) {
+function tratarErro(erro, complemento = '') {
   console.error(erro);
   if (erro instanceof ErroGitHub && erro.tipo === 'token') {
     apagarToken();
     cliente = null;
     mostrarTela('login');
   }
-  mostrarMensagem('erro', textoDoErro(erro));
+  mostrarMensagem('erro', [textoDoErro(erro), complemento].filter(Boolean).join(' '));
 }
 
 // ===== Lista =====
@@ -105,12 +110,22 @@ function desenharLista() {
 async function excluir(noticia) {
   if (!window.confirm(`Excluir a notícia "${noticia.titulo}"? Esta ação não pode ser desfeita.`)) return;
   limparMensagem();
+  let avisos;
   try {
-    const { avisos } = await excluirNoticiaPublicada({ cliente, id: noticia.id });
+    ({ avisos } = await excluirNoticiaPublicada({ cliente, id: noticia.id }));
+  } catch (erro) {
+    tratarErro(erro);
+    return;
+  }
+  // A notícia já foi excluída: uma falha só na recarga não pode deixá-la na tela.
+  try {
     await recarregarLista();
     mostrarMensagem(avisos.length > 0 ? 'info' : 'ok', ['Notícia excluída.', AVISO_PUBLICACAO, ...avisos].join(' '));
   } catch (erro) {
-    tratarErro(erro);
+    console.error(erro);
+    lista = lista.filter((n) => n.id !== noticia.id);
+    desenharLista();
+    mostrarMensagem('info', ['Notícia excluída.', 'Não foi possível atualizar a lista agora. Recarregue a página para vê-la.', ...avisos].join(' '));
   }
 }
 
@@ -119,6 +134,10 @@ function atualizarContador() {
   const tamanho = $('campo-resumo').value.length;
   $('contador-resumo').textContent = `${tamanho}/${LIMITE_RESUMO}`;
   $('contador-resumo').classList.toggle('excedeu', tamanho > LIMITE_RESUMO);
+}
+
+function atualizarBotaoPublicar() {
+  $('botao-publicar').disabled = publicando || preparandoImagem;
 }
 
 function atualizarPrevia(src) {
@@ -136,6 +155,9 @@ function abrirFormulario(id = null) {
   limparMensagem();
   editandoId = id;
   imagemPreparada = null;
+  geracaoImagem += 1; // descarta qualquer preparo de imagem que ainda esteja em andamento
+  preparandoImagem = false;
+  atualizarBotaoPublicar();
   const noticia = id ? buscar(lista, id) : null;
   $('titulo-formulario').textContent = noticia ? 'Editar notícia' : 'Nova notícia';
   $('campo-titulo').value = noticia?.titulo ?? '';
@@ -147,12 +169,15 @@ function abrirFormulario(id = null) {
   $('campo-remover-imagem').checked = false;
   $('grupo-remover-imagem').hidden = !noticia?.imagem;
   atualizarContador();
-  atualizarPrevia(noticia?.imagem ? `../${noticia.imagem}` : null);
+  atualizarPrevia(imagemValida(noticia?.imagem) ? `../${noticia.imagem}` : null);
   mostrarTela('form');
   $('campo-titulo').focus();
 }
 
 async function aoEscolherImagem(evento) {
+  const geracao = ++geracaoImagem;
+  preparandoImagem = false;
+  atualizarBotaoPublicar();
   const arquivo = evento.target.files[0];
   imagemPreparada = null;
   if (!arquivo) {
@@ -166,24 +191,37 @@ async function aoEscolherImagem(evento) {
     mostrarMensagem('erro', problema);
     return;
   }
+  // Até a imagem ficar pronta, Publicar fica desabilitado: senão a notícia sairia sem a imagem.
+  preparandoImagem = true;
+  atualizarBotaoPublicar();
   try {
-    imagemPreparada = await prepararImagem(arquivo);
-    atualizarPrevia(imagemPreparada.previaUrl);
+    const preparada = await prepararImagem(arquivo);
+    if (geracao !== geracaoImagem) return; // outra imagem foi escolhida (ou o formulário foi reaberto) depois desta
+    imagemPreparada = preparada;
+    atualizarPrevia(preparada.previaUrl);
     $('campo-remover-imagem').checked = false;
     limparMensagem();
   } catch (erro) {
+    if (geracao !== geracaoImagem) return;
     console.error(erro);
     evento.target.value = '';
     atualizarPrevia(null);
     mostrarMensagem('erro', 'Não foi possível ler esta imagem. Tente outro arquivo.');
+  } finally {
+    if (geracao === geracaoImagem) {
+      preparandoImagem = false;
+      atualizarBotaoPublicar();
+    }
   }
 }
 
 async function aoEnviarFormulario(evento) {
   evento.preventDefault();
+  if (publicando || preparandoImagem) return;
   limparMensagem();
   const botao = $('botao-publicar');
-  botao.disabled = true;
+  publicando = true;
+  atualizarBotaoPublicar();
   botao.textContent = 'Publicando…';
   try {
     const dados = {
@@ -217,9 +255,16 @@ async function aoEnviarFormulario(evento) {
       mostrarMensagem('info', ['Publicado!', 'Não foi possível atualizar a lista agora. Recarregue a página para vê-la.', ...avisos].join(' '));
     }
   } catch (erro) {
-    tratarErro(erro);
+    if (erro instanceof ErroGitHub && erro.tipo === 'token') {
+      // Token sem permissão de escrita: o formulário não é tocado, e o próximo login volta a ele.
+      retomarFormulario = true;
+      tratarErro(erro, 'O que você estava escrevendo foi mantido: entre de novo com um token com permissão de escrita para publicar.');
+    } else {
+      tratarErro(erro);
+    }
   } finally {
-    botao.disabled = false;
+    publicando = false;
+    atualizarBotaoPublicar();
     botao.textContent = 'Publicar';
   }
 }
@@ -230,7 +275,8 @@ async function entrar(token) {
   await novo.validarAcesso();
   cliente = novo;
   await recarregarLista();
-  mostrarTela('lista');
+  mostrarTela(retomarFormulario ? 'form' : 'lista');
+  retomarFormulario = false;
 }
 
 async function aoEnviarLogin(evento) {
@@ -258,6 +304,7 @@ function sair() {
   apagarToken();
   cliente = null;
   lista = [];
+  retomarFormulario = false; // logout explícito: o rascunho não volta (abrirFormulario limpa tudo)
   limparMensagem();
   mostrarTela('login');
 }
