@@ -23,3 +23,7 @@ test('calcularDimensoes não amplia imagens pequenas', () => {
   assert.deepEqual(calcularDimensoes(800, 600), { largura: 800, altura: 600 });
   assert.deepEqual(calcularDimensoes(1200, 900), { largura: 1200, altura: 900 });
 });
+
+test('calcularDimensoes nunca devolve altura zero', () => {
+  assert.deepEqual(calcularDimensoes(5000, 1), { largura: 1200, altura: 1 });
+});

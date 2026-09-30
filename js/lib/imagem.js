@@ -11,7 +11,7 @@ export function validarArquivoImagem(arquivo) {
 
 export function calcularDimensoes(largura, altura, maximo = LARGURA_MAXIMA) {
   if (largura <= maximo) return { largura, altura };
-  return { largura: maximo, altura: Math.round(altura * (maximo / largura)) };
+  return { largura: maximo, altura: Math.max(1, Math.round(altura * (maximo / largura))) };
 }
 
 // Só funciona no navegador (usa canvas). Devolve o JPEG em base64, sem o prefixo "data:".
