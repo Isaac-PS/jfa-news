@@ -200,9 +200,22 @@ async function aoEnviarFormulario(evento) {
       imagemBase64: imagemPreparada?.base64 ?? null,
       removerImagem: $('campo-remover-imagem').checked,
     });
-    await recarregarLista();
+    // A notícia já está publicada: a partir daqui, repetir o envio criaria uma duplicata.
+    editandoId = null;
+    imagemPreparada = null;
+    let listaAtualizada = true;
+    try {
+      await recarregarLista();
+    } catch (erroRecarga) {
+      console.error(erroRecarga);
+      listaAtualizada = false;
+    }
     mostrarTela('lista');
-    mostrarMensagem(avisos.length > 0 ? 'info' : 'ok', ['Publicado!', AVISO_PUBLICACAO, ...avisos].join(' '));
+    if (listaAtualizada) {
+      mostrarMensagem(avisos.length > 0 ? 'info' : 'ok', ['Publicado!', AVISO_PUBLICACAO, ...avisos].join(' '));
+    } else {
+      mostrarMensagem('info', ['Publicado!', 'Não foi possível atualizar a lista agora. Recarregue a página para vê-la.', ...avisos].join(' '));
+    }
   } catch (erro) {
     tratarErro(erro);
   } finally {

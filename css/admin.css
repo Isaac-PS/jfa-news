@@ -28,7 +28,7 @@
 .campo input[type="text"], .campo input[type="password"], .campo input[type="date"], .campo textarea {
   width: 100%; padding: 12px 14px; border: 2px solid #ccd3e0; border-radius: 10px; background: var(--branco); color: var(--texto); font: inherit;
 }
-.campo input:focus, .campo textarea:focus { border-color: var(--azul); outline: none; box-shadow: 0 0 0 3px rgba(0, 71, 171, 0.2); }
+.campo input[type="text"]:focus, .campo input[type="password"]:focus, .campo input[type="date"]:focus, .campo textarea:focus { border-color: var(--azul); outline: 3px solid transparent; box-shadow: 0 0 0 3px rgba(0, 71, 171, 0.2); }
 .campo textarea { min-height: 96px; resize: vertical; }
 .campo textarea.campo__texto { min-height: 240px; }
 .campo small { color: var(--texto-suave); }
