@@ -1,0 +1,12 @@
+{
+  "name": "jornal-fa-news",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Site do Jornal FA News, da escola Félix de Azevedo",
+  "scripts": {
+    "test": "node --test tests/*.test.js",
+    "servir": "node scripts/servir.js",
+    "mock-github": "node scripts/mock-github.js"
+  }
+}
