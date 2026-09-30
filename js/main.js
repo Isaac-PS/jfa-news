@@ -15,7 +15,10 @@ function iniciarMenu() {
     if (evento.target.closest('a')) alternar(false);
   });
   document.addEventListener('keydown', (evento) => {
-    if (evento.key === 'Escape') alternar(false);
+    if (evento.key === 'Escape' && lista.classList.contains('aberto')) {
+      alternar(false);
+      botao.focus();
+    }
   });
 }
 

@@ -18,7 +18,7 @@ async function carregarNoticias() {
 
 export function criarCard(noticia, nivelTitulo = 'h3') {
   const midia = imagemValida(noticia.imagem)
-    ? el('img', { class: 'card__imagem', src: noticia.imagem, alt: `Imagem da notícia: ${noticia.titulo}`, loading: 'lazy' })
+    ? el('img', { class: 'card__imagem', src: noticia.imagem, alt: '', loading: 'lazy' }) // o link do título já nomeia o cartão
     : el('div', { class: 'card__imagem card__imagem--vazia' }, el('img', { src: 'assets/icone.png', alt: '', width: 72, height: 72 }));
 
   return el('article', { class: 'card' },
