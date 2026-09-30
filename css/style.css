@@ -184,6 +184,13 @@ h1, h2, h3 { font-family: var(--fonte-titulo); line-height: 1.15; margin: 0 0 0.
 .leitura__meta { margin: 0 0 24px; font-weight: 600; color: var(--texto-suave); }
 .leitura__imagem { width: 100%; margin-bottom: 28px; border-radius: var(--raio); box-shadow: var(--sombra); }
 .leitura__texto p { margin: 0 0 1.2em; font-size: 1.125rem; white-space: pre-line; }
+.leitura__texto h2 { margin: 1.6em 0 0.6em; font-size: clamp(1.3rem, 3vw, 1.7rem); font-weight: 800; }
+.leitura__texto a { font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
+.leitura__figura { margin: 0 0 1.6em; }
+.leitura__figura img { width: 100%; height: auto; border-radius: var(--raio); box-shadow: var(--sombra); }
+.leitura__figura figcaption { margin-top: 8px; font-size: 0.95rem; color: var(--texto-suave); text-align: center; }
+.leitura__video { position: relative; aspect-ratio: 16 / 9; margin: 0 0 1.6em; border-radius: var(--raio); overflow: hidden; background: #000; box-shadow: var(--sombra); }
+.leitura__video iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
 
 /* ===== Animações =====
    Tudo aqui é desligado por `prefers-reduced-motion` (bloco no início do arquivo).

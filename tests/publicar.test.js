@@ -193,3 +193,26 @@ test('excluir: falha ao apagar a imagem vira aviso e a notícia sai do JSON', as
   assert.equal(resultado.avisos.length, 1);
   assert.deepEqual(cliente.estado.json.noticias, []);
 });
+
+// ===== Imagens dentro do texto =====
+test('excluir notícia apaga também as imagens hospedadas dentro do texto', async () => {
+  const texto = 'Oi\n\n![a](assets/noticias/corpo-1.jpg)\n\n![b](https://outro.com/x.png)\n\n![c](assets/noticias/corpo-2.jpg)';
+  const cliente = criarClienteFalso({ noticias: [{ id: 'x', ...dados, texto, imagem: 'assets/noticias/x.jpg' }] });
+  const resultado = await excluirNoticiaPublicada({ cliente, id: 'x' });
+  assert.deepEqual(resultado.avisos, []);
+  assert.deepEqual(cliente.estado.apagados, ['assets/noticias/x.jpg', 'assets/noticias/corpo-1.jpg', 'assets/noticias/corpo-2.jpg']);
+});
+
+test('excluir: falha ao apagar imagem do texto vira aviso e as outras ainda são apagadas', async () => {
+  const texto = '![a](assets/noticias/corpo-1.jpg)\n\n![c](assets/noticias/corpo-2.jpg)';
+  const cliente = criarClienteFalso({ noticias: [{ id: 'x', ...dados, texto, imagem: null }] });
+  let primeira = true;
+  const apagar = cliente.apagarArquivo;
+  cliente.apagarArquivo = async (caminho) => {
+    if (primeira) { primeira = false; throw new Error('rede'); }
+    return apagar(caminho);
+  };
+  const resultado = await excluirNoticiaPublicada({ cliente, id: 'x' });
+  assert.equal(resultado.avisos.length, 1);
+  assert.deepEqual(cliente.estado.apagados, ['assets/noticias/corpo-2.jpg']);
+});

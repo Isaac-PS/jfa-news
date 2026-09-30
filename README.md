@@ -67,6 +67,22 @@ Guarde o token em local seguro e não o compartilhe fora da equipe. Se ele vazar
 
 **Limites do painel:** título com até 120 caracteres e resumo com até 160. A imagem de capa pode ser JPG, PNG ou WebP, com até 15 MB; o painel a reduz sozinho para no máximo 1200 px de largura.
 
+### Formatar o texto, com links, imagens e vídeos
+
+Acima do campo **Texto** há uma barra de botões, e logo abaixo dele a **Prévia do texto** mostra como a notícia vai ficar.
+
+| Botão | O que faz |
+|---|---|
+| **Subtítulo** | Transforma a linha do cursor em subtítulo (`## Título`). Clique de novo para desfazer. |
+| **N** / **I** | Negrito (`**texto**`) e itálico (`*texto*`) no trecho selecionado. |
+| **Link** | Transforma o trecho selecionado em link (`[texto](https://endereço)`). Aceita `exemplo.com` sem o `https://`. |
+| **Imagem** | Envia uma foto do computador ou celular (reduzida sozinha) ou usa o endereço `https://` de uma imagem, com uma descrição que vira legenda. |
+| **Vídeo** | Incorpora um vídeo a partir do link do YouTube ou do Vimeo. |
+
+Os botões só escrevem essa marcação no texto; se preferir, digite-a à mão. Textos antigos, sem marcação, continuam iguais. HTML digitado no texto não é interpretado: aparece como texto comum.
+
+Uma imagem enviada pelo botão **Imagem** vai para o site na hora. Se você desistir da notícia sem publicar, o arquivo fica no repositório (pasta `assets/noticias/`, nome começando por `corpo-`) e pode ser apagado pelo GitHub. Ao **excluir** uma notícia, o painel apaga também as imagens dela.
+
 As três notícias que vêm no projeto são exemplos (título começa com "Exemplo:"). Exclua-as pelo painel quando publicar as reais.
 
 ## Trocar textos, equipe e contatos

@@ -2,7 +2,8 @@ import { carregarJson } from './lib/dados.js';
 import { el, montar } from './lib/dom.js';
 import { ordenar, buscar } from './lib/modelo.js';
 import { formatarData, imagemValida, resumoOuInicio } from './lib/formato.js';
-import { paragrafos } from './lib/texto.js';
+import { renderizarTexto } from './lib/render-texto.js';
+import { textoSimples } from './lib/texto.js';
 
 const AVISO_VAZIO = 'Ainda não há notícias publicadas. Volte em breve!';
 const AVISO_ERRO = 'Não foi possível carregar as notícias agora. Tente novamente em instantes.';
@@ -27,7 +28,7 @@ export function criarCard(noticia, nivelTitulo = 'h3') {
       el('span', { class: 'card__data', text: formatarData(noticia.data) }),
       el(nivelTitulo, { class: 'card__titulo' },
         el('a', { href: `noticia.html?id=${encodeURIComponent(noticia.id)}`, text: noticia.titulo })),
-      el('p', { class: 'card__resumo', text: resumoOuInicio(noticia) }),
+      el('p', { class: 'card__resumo', text: resumoOuInicio({ resumo: noticia.resumo, texto: textoSimples(noticia.texto) }) }),
       el('span', { class: 'card__mais', 'aria-hidden': 'true', text: 'Ler notícia →' }),
     ),
   );
@@ -82,7 +83,7 @@ async function iniciarLeitura(container) {
     imagemValida(noticia.imagem)
       ? el('img', { class: 'leitura__imagem', src: noticia.imagem, alt: `Imagem da notícia: ${noticia.titulo}` })
       : null,
-    el('div', { class: 'leitura__texto' }, paragrafos(noticia.texto).map((paragrafo) => el('p', { text: paragrafo }))),
+    el('div', { class: 'leitura__texto' }, renderizarTexto(noticia.texto)),
   );
 }
 

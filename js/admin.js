@@ -1,10 +1,13 @@
 import { carregarJson } from './lib/dados.js';
 import { criarClienteGitHub, ErroGitHub } from './lib/github.js';
 import { ordenar, buscar, LIMITE_RESUMO } from './lib/modelo.js';
-import { publicarNoticia, excluirNoticiaPublicada, ErroValidacao, CAMINHO_JSON } from './lib/publicar.js';
+import { publicarNoticia, excluirNoticiaPublicada, ErroValidacao, CAMINHO_JSON, PASTA_IMAGENS } from './lib/publicar.js';
 import { prepararImagem, validarArquivoImagem } from './lib/imagem.js';
 import { formatarData, dataIsoLocal, imagemValida } from './lib/formato.js';
 import { el, montar } from './lib/dom.js';
+import { envolver, prefixarLinha, inserirBloco, montarLink } from './lib/editor.js';
+import { renderizarTexto } from './lib/render-texto.js';
+import { linkSeguro, imagemSegura, videoIncorporado } from './lib/texto.js';
 
 const CHAVE_TOKEN = 'fa-news-token';
 const AVISO_PUBLICACAO = 'O site será atualizado em cerca de 1 a 2 minutos.';
@@ -21,6 +24,8 @@ let geracaoImagem = 0; // muda a cada escolha de imagem: descarta resultado de p
 let preparandoImagem = false; // true enquanto a imagem escolhida está sendo reduzida
 let publicando = false; // true enquanto o envio ao GitHub está em andamento
 let retomarFormulario = false; // após token recusado ao publicar, o próximo login volta ao formulário
+let enviandoImagemTexto = false; // true enquanto uma imagem do texto sobe para o GitHub
+const previasLocais = new Map(); // caminho no site → prévia das imagens enviadas nesta sessão (o site leva 1-2 min para servi-las)
 
 // ===== Token =====
 function lerToken() {
@@ -169,9 +174,150 @@ function abrirFormulario(id = null) {
   $('campo-remover-imagem').checked = false;
   $('grupo-remover-imagem').hidden = !noticia?.imagem;
   atualizarContador();
+  atualizarPreviaTexto();
   atualizarPrevia(imagemValida(noticia?.imagem) ? `../${noticia.imagem}` : null);
   mostrarTela('form');
   $('campo-titulo').focus();
+}
+
+// ===== Editor do texto =====
+function atualizarPreviaTexto() {
+  montar($('previa-texto'), renderizarTexto($('campo-texto').value, (caminho) => previasLocais.get(caminho) ?? `../${caminho}`));
+}
+
+function aplicarNoTexto(resultado) {
+  const campo = $('campo-texto');
+  campo.value = resultado.valor;
+  campo.focus();
+  campo.setSelectionRange(resultado.inicio, resultado.fim);
+  atualizarPreviaTexto();
+}
+
+// Aceita "exemplo.com" (sem https://) e protege os parênteses, que quebrariam a marcação [texto](endereço).
+function normalizarEndereco(bruto) {
+  const endereco = bruto.trim();
+  if (!endereco || /\s/.test(endereco)) return null;
+  const completo = /^[a-z][a-z0-9+.-]*:/i.test(endereco) ? endereco : `https://${endereco}`;
+  return completo.replace(/\(/g, '%28').replace(/\)/g, '%29');
+}
+
+function abrirDialogo(nome) {
+  const dialogo = $(`dialogo-${nome}`);
+  dialogo.querySelector('form').reset();
+  $(`erro-${nome}`).hidden = true;
+  dialogo.showModal();
+  dialogo.querySelector('input').focus();
+}
+
+function erroNoDialogo(nome, texto) {
+  const erro = $(`erro-${nome}`);
+  erro.textContent = texto;
+  erro.hidden = false;
+}
+
+function aoClicarBarra(evento) {
+  const botao = evento.target.closest('[data-acao]');
+  if (!botao) return;
+  const { value, selectionStart: inicio, selectionEnd: fim } = $('campo-texto');
+  switch (botao.dataset.acao) {
+    case 'subtitulo': aplicarNoTexto(prefixarLinha(value, inicio, fim, '## ')); break;
+    case 'negrito': aplicarNoTexto(envolver(value, inicio, fim, '**', 'texto em negrito')); break;
+    case 'italico': aplicarNoTexto(envolver(value, inicio, fim, '*', 'texto em itálico')); break;
+    default: abrirDialogo(botao.dataset.acao);
+  }
+}
+
+function aoEnviarLink(evento) {
+  evento.preventDefault();
+  const endereco = normalizarEndereco($('campo-link-url').value);
+  if (!endereco || !linkSeguro(endereco)) {
+    erroNoDialogo('link', 'Informe um endereço válido, como https://exemplo.com.');
+    return;
+  }
+  const campo = $('campo-texto');
+  $('dialogo-link').close();
+  aplicarNoTexto(montarLink(campo.value, campo.selectionStart, campo.selectionEnd, endereco));
+}
+
+function aoEnviarVideo(evento) {
+  evento.preventDefault();
+  const endereco = normalizarEndereco($('campo-video-url').value);
+  if (!endereco || !videoIncorporado(endereco)) {
+    erroNoDialogo('video', 'Use um link de vídeo do YouTube ou do Vimeo.');
+    return;
+  }
+  const campo = $('campo-texto');
+  $('dialogo-video').close();
+  aplicarNoTexto(inserirBloco(campo.value, campo.selectionStart, campo.selectionEnd, endereco));
+}
+
+async function aoEnviarImagemTexto(evento) {
+  evento.preventDefault();
+  if (enviandoImagemTexto) return;
+  const arquivo = $('campo-corpo-arquivo').files[0];
+  const endereco = normalizarEndereco($('campo-corpo-url').value);
+  const descricao = $('campo-corpo-descricao').value.replace(/[[\]\s]+/g, ' ').trim();
+
+  let src = null;
+  if (arquivo) {
+    const problema = validarArquivoImagem(arquivo);
+    if (problema) {
+      erroNoDialogo('imagem', problema);
+      return;
+    }
+  } else if (endereco && imagemSegura(endereco)?.startsWith('https:')) {
+    src = endereco;
+  } else {
+    erroNoDialogo('imagem', endereco ? 'O endereço da imagem precisa começar com https://.' : 'Escolha uma imagem ou informe o endereço de uma.');
+    return;
+  }
+
+  if (arquivo) {
+    const botao = $('botao-inserir-imagem');
+    enviandoImagemTexto = true;
+    botao.disabled = true;
+    botao.textContent = 'Enviando…';
+    try {
+      const { base64, previaUrl } = await prepararImagem(arquivo);
+      const caminho = `${PASTA_IMAGENS}corpo-${Date.now()}.jpg`;
+      await cliente.enviarArquivo(caminho, base64, 'Imagem dentro de uma notícia');
+      previasLocais.set(caminho, previaUrl);
+      src = caminho;
+    } catch (erro) {
+      console.error(erro);
+      if (erro instanceof ErroGitHub && erro.tipo === 'token') {
+        $('dialogo-imagem').close();
+        retomarFormulario = true;
+        tratarErro(erro, 'O que você estava escrevendo foi mantido: entre de novo com um token com permissão de escrita.');
+      } else {
+        erroNoDialogo('imagem', erro instanceof ErroGitHub ? textoDoErro(erro) : 'Não foi possível enviar esta imagem. Tente de novo.');
+      }
+      return;
+    } finally {
+      enviandoImagemTexto = false;
+      botao.disabled = false;
+      botao.textContent = 'Inserir';
+    }
+  }
+
+  const campo = $('campo-texto');
+  $('dialogo-imagem').close();
+  aplicarNoTexto(inserirBloco(campo.value, campo.selectionStart, campo.selectionEnd, `![${descricao}](${src})`));
+}
+
+function iniciarEditorTexto() {
+  $('campo-texto').addEventListener('input', atualizarPreviaTexto);
+  document.querySelector('.barra-editor').addEventListener('click', aoClicarBarra);
+  $('form-link').addEventListener('submit', aoEnviarLink);
+  $('form-imagem').addEventListener('submit', aoEnviarImagemTexto);
+  $('form-video').addEventListener('submit', aoEnviarVideo);
+  for (const botao of document.querySelectorAll('[data-fechar]')) {
+    botao.addEventListener('click', () => botao.closest('dialog').close());
+  }
+  // Durante o envio da imagem, Esc não pode fechar a janela: o resultado precisa de onde aparecer.
+  $('dialogo-imagem').addEventListener('cancel', (evento) => {
+    if (enviandoImagemTexto) evento.preventDefault();
+  });
 }
 
 async function aoEscolherImagem(evento) {
@@ -314,6 +460,7 @@ async function iniciar() {
   $('form-login').addEventListener('submit', aoEnviarLogin);
   $('form-noticia').addEventListener('submit', aoEnviarFormulario);
   $('campo-resumo').addEventListener('input', atualizarContador);
+  iniciarEditorTexto();
   $('campo-imagem').addEventListener('change', aoEscolherImagem);
   $('botao-nova').addEventListener('click', () => abrirFormulario());
   $('botao-cancelar').addEventListener('click', () => {

@@ -1,6 +1,7 @@
 import { gerarId } from './slug.js';
 import { validar, buscar, criarNoticia, editarNoticia, excluirNoticia } from './modelo.js';
 import { imagemValida } from './formato.js';
+import { imagensDoTexto } from './texto.js';
 
 export const CAMINHO_JSON = 'data/noticias.json';
 export const PASTA_IMAGENS = 'assets/noticias/';
@@ -69,12 +70,17 @@ export async function excluirNoticiaPublicada({ cliente, id }) {
   );
 
   const avisos = [];
-  if (existente.imagem && imagemValida(existente.imagem, PASTA_IMAGENS)) {
+  const arquivos = [];
+  if (existente.imagem && imagemValida(existente.imagem, PASTA_IMAGENS)) arquivos.push(existente.imagem);
+  arquivos.push(...imagensDoTexto(existente.texto));
+  let falhas = 0;
+  for (const arquivo of new Set(arquivos)) {
     try {
-      await cliente.apagarArquivo(existente.imagem, `Remove imagem da notícia ${id}`);
+      await cliente.apagarArquivo(arquivo, `Remove imagem da notícia ${id}`);
     } catch {
-      avisos.push('A notícia foi excluída, mas não foi possível apagar a imagem.');
+      falhas += 1;
     }
   }
+  if (falhas > 0) avisos.push('A notícia foi excluída, mas não foi possível apagar algumas imagens.');
   return { avisos };
 }
