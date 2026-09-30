@@ -22,6 +22,24 @@ function iniciarMenu() {
   });
 }
 
+// Revela seções e listas quando entram na tela. As classes só são colocadas aqui:
+// sem JavaScript, com movimento reduzido ou sem IntersectionObserver, nada fica escondido.
+function iniciarRevelar() {
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches || !('IntersectionObserver' in window)) return;
+  const alvos = document.querySelectorAll('.secao__cabeca, .faixa__interno, .patrocinio__interno, .grade-cards, .grade-equipe, .redes');
+  const observador = new IntersectionObserver((entradas) => {
+    for (const entrada of entradas) {
+      if (!entrada.isIntersecting) continue;
+      entrada.target.classList.add('visivel');
+      observador.unobserve(entrada.target);
+    }
+  }, { threshold: 0.12 });
+  for (const alvo of alvos) {
+    alvo.classList.add(alvo.matches('.grade-cards, .grade-equipe, .redes') ? 'cascata' : 'revelar');
+    observador.observe(alvo);
+  }
+}
+
 function aplicarConfig(config) {
   const links = {
     youtube: config.youtube,
@@ -74,6 +92,7 @@ async function iniciarEquipe(container) {
 }
 
 iniciarMenu();
+iniciarRevelar();
 
 carregarJson('data/config.json')
   .then(aplicarConfig)

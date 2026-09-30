@@ -184,3 +184,57 @@ h1, h2, h3 { font-family: var(--fonte-titulo); line-height: 1.15; margin: 0 0 0.
 .leitura__meta { margin: 0 0 24px; font-weight: 600; color: var(--texto-suave); }
 .leitura__imagem { width: 100%; margin-bottom: 28px; border-radius: var(--raio); box-shadow: var(--sombra); }
 .leitura__texto p { margin: 0 0 1.2em; font-size: 1.125rem; white-space: pre-line; }
+
+/* ===== Animações =====
+   Tudo aqui é desligado por `prefers-reduced-motion` (bloco no início do arquivo).
+   As classes `.revelar`, `.cascata` e `.visivel` só são colocadas pelo js/main.js, então sem JavaScript nada fica escondido. */
+@keyframes entrar { from { opacity: 0; transform: translateY(24px); } }
+@keyframes entrar-arte { from { opacity: 0; transform: scale(0.8) rotate(-8deg); } }
+@keyframes derivar { to { transform: translate(-40px, 30px) scale(1.08); } }
+@keyframes pulsar { 0% { box-shadow: 0 0 0 0 rgba(255, 221, 87, 0.55); } 70%, 100% { box-shadow: 0 0 0 16px rgba(255, 221, 87, 0); } }
+@keyframes brilho { 0%, 55% { transform: translateX(-140%) skewX(-20deg); } 100% { transform: translateX(260%) skewX(-20deg); } }
+@keyframes balancar { 25% { transform: rotate(-12deg) scale(1.08); } 75% { transform: rotate(12deg) scale(1.08); } }
+
+/* Topo: entrada em sequência */
+.hero__selo, .hero h1, .hero__texto, .hero__acoes { animation: entrar 0.7s ease backwards; }
+.hero h1 { animation-delay: 0.12s; }
+.hero__texto { animation-delay: 0.24s; }
+.hero__acoes { animation-delay: 0.36s; }
+.hero__arte img { animation: entrar-arte 1s ease backwards, flutuar 6s ease-in-out 1s infinite; }
+.hero::before { animation: derivar 18s ease-in-out infinite alternate; }
+.hero::after { animation: derivar 22s ease-in-out infinite alternate-reverse; }
+
+/* Revelar ao rolar */
+.revelar { transition: opacity 0.7s ease, transform 0.7s ease; }
+.revelar:not(.visivel) { opacity: 0; transform: translateY(24px); }
+.secao__cabeca.revelar h1::after, .secao__cabeca.revelar h2::after { width: 0; transition: width 0.8s ease 0.3s; }
+.secao__cabeca.revelar.visivel h1::after, .secao__cabeca.revelar.visivel h2::after { width: 64px; }
+
+/* Cartões e listas entram em cascata */
+.cascata:not(.visivel) > * { opacity: 0; }
+.cascata.visivel > * { animation: entrar 0.6s ease backwards; }
+.cascata.visivel > :nth-child(2) { animation-delay: 0.08s; }
+.cascata.visivel > :nth-child(3) { animation-delay: 0.16s; }
+.cascata.visivel > :nth-child(4) { animation-delay: 0.24s; }
+.cascata.visivel > :nth-child(5) { animation-delay: 0.32s; }
+.cascata.visivel > :nth-child(6) { animation-delay: 0.4s; }
+.cascata.visivel > :nth-child(n + 7) { animation-delay: 0.48s; }
+
+/* Botão do YouTube: pulso discreto e brilho que passa */
+.faixa .botao--amarelo { position: relative; overflow: hidden; animation: pulsar 2.8s ease-out infinite; }
+.faixa .botao--amarelo::after { content: ""; position: absolute; inset: 0 auto 0 0; width: 40%; background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.6), transparent); transform: translateX(-140%) skewX(-20deg); animation: brilho 4.5s ease-in-out infinite; pointer-events: none; }
+
+/* Redes sociais: ícone balança no hover */
+.rede:hover .rede__icone { animation: balancar 0.5s ease; }
+
+/* Menu: sublinhado animado (desktop) */
+@media (min-width: 861px) {
+  .menu__lista a { position: relative; }
+  .menu__lista a::after { content: ""; position: absolute; left: 14px; right: 14px; bottom: 6px; height: 3px; border-radius: 2px; background: var(--amarelo-forte); transform: scaleX(0); transform-origin: left; transition: transform 0.25s ease; }
+  .menu__lista a:hover::after, .menu__lista a:focus-visible::after { transform: scaleX(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .revelar:not(.visivel), .cascata:not(.visivel) > * { opacity: 1; transform: none; }
+  .secao__cabeca.revelar h1::after, .secao__cabeca.revelar h2::after { width: 64px; }
+}
