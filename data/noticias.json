@@ -1,0 +1,31 @@
+{
+  "noticias": [
+    {
+      "id": "2026-09-30-exemplo-bem-vindos-ao-jornal-fa-news",
+      "titulo": "Exemplo: Bem-vindos ao Jornal FA News",
+      "autor": "Equipe FA News",
+      "data": "2026-09-30",
+      "resumo": "Esta é uma notícia de exemplo para você ver como as publicações aparecem no site.",
+      "texto": "Esta é uma notícia de exemplo. Ela existe apenas para mostrar como o texto, a data e o autor aparecem na página.\n\nPara apagar este exemplo, entre no painel administrativo e use o botão Excluir.\n\nDepois, publique a primeira notícia de verdade!",
+      "imagem": null
+    },
+    {
+      "id": "2026-09-26-exemplo-feira-de-ciencias",
+      "titulo": "Exemplo: Feira de Ciências",
+      "autor": "Equipe FA News",
+      "data": "2026-09-26",
+      "resumo": "Modelo de notícia com dois parágrafos. Troque pelo texto real do evento.",
+      "texto": "Este é um modelo de notícia sobre um evento da escola. Aqui entram as informações principais: o que aconteceu, quando e onde.\n\nNo segundo parágrafo, o texto pode trazer detalhes, depoimentos e o que vem a seguir.",
+      "imagem": null
+    },
+    {
+      "id": "2026-09-22-exemplo-campeonato-interclasse",
+      "titulo": "Exemplo: Campeonato Interclasse",
+      "autor": "Equipe FA News",
+      "data": "2026-09-22",
+      "resumo": "Outro exemplo de notícia, só para preencher a lista enquanto o jornal não publica as reais.",
+      "texto": "Mais um texto de exemplo. Ele será substituído pelas notícias que a equipe do jornal publicar pelo painel.",
+      "imagem": null
+    }
+  ]
+}

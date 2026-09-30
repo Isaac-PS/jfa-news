@@ -1,0 +1,8 @@
+{
+  "membros": [
+    { "nome": "Maria Exemplo", "funcao": "Apresentadora", "bio": "Mini bio de exemplo. Troque pelo texto real da integrante.", "foto": null },
+    { "nome": "João Exemplo", "funcao": "Repórter", "bio": "Mini bio de exemplo. Troque pelo texto real do integrante.", "foto": null },
+    { "nome": "Ana Exemplo", "funcao": "Edição de vídeo", "bio": "Mini bio de exemplo. Troque pelo texto real da integrante.", "foto": null },
+    { "nome": "Pedro Exemplo", "funcao": "Coordenação", "bio": "Mini bio de exemplo. Troque pelo texto real do integrante.", "foto": null }
+  ]
+}
