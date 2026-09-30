@@ -45,3 +45,19 @@
 .item-admin__titulo { font-weight: 700; color: var(--azul-profundo); overflow-wrap: anywhere; }
 .item-admin__data { font-size: 0.9rem; color: var(--texto-suave); }
 .item-admin__acoes { display: flex; gap: 8px; }
+
+.campo__rotulo { font-weight: 700; color: var(--azul-profundo); }
+.barra-editor { display: flex; flex-wrap: wrap; gap: 6px; }
+.barra-editor__botao { min-width: 44px; min-height: 40px; padding: 6px 12px; border: 2px solid #ccd3e0; border-radius: 8px; background: var(--branco); color: var(--azul-profundo); font: inherit; font-weight: 700; cursor: pointer; }
+.barra-editor__botao:hover { border-color: var(--azul); background: #eef3fb; }
+.barra-editor__botao--italico { font-style: italic; }
+.previa-texto { max-height: 420px; padding: 16px; overflow: auto; border: 2px dashed #ccd3e0; border-radius: 10px; }
+.previa-texto:empty::before { content: "A prévia do texto aparece aqui."; color: var(--texto-suave); }
+.previa-texto p { font-size: 1rem; }
+
+.dialogo { width: min(480px, calc(100% - 32px)); padding: 24px; border: 0; border-radius: var(--raio); background: var(--branco); color: var(--texto); box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35); }
+.dialogo::backdrop { background: rgba(0, 20, 60, 0.55); }
+.dialogo h2 { margin: 0 0 16px; font-size: 1.3rem; font-weight: 800; }
+.dialogo input[type="text"] { width: 100%; padding: 12px 14px; border: 2px solid #ccd3e0; border-radius: 10px; font: inherit; }
+.dialogo input[type="text"]:focus { border-color: var(--azul); outline: 3px solid transparent; box-shadow: 0 0 0 3px rgba(0, 71, 171, 0.2); }
+.dialogo__erro { margin: 0 0 12px; color: var(--erro); font-weight: 600; }

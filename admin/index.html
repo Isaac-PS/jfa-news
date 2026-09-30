@@ -78,8 +78,20 @@
         </div>
         <div class="campo">
           <label for="campo-texto">Texto</label>
+          <div class="barra-editor" role="toolbar" aria-label="Formatação do texto" aria-controls="campo-texto">
+            <button type="button" class="barra-editor__botao" data-acao="subtitulo" title="Subtítulo">Subtítulo</button>
+            <button type="button" class="barra-editor__botao barra-editor__botao--negrito" data-acao="negrito" title="Negrito">N</button>
+            <button type="button" class="barra-editor__botao barra-editor__botao--italico" data-acao="italico" title="Itálico">I</button>
+            <button type="button" class="barra-editor__botao" data-acao="link" title="Inserir link">Link</button>
+            <button type="button" class="barra-editor__botao" data-acao="imagem" title="Inserir imagem">Imagem</button>
+            <button type="button" class="barra-editor__botao" data-acao="video" title="Inserir vídeo">Vídeo</button>
+          </div>
           <textarea id="campo-texto" class="campo__texto"></textarea>
-          <small>Deixe uma linha em branco entre um parágrafo e outro.</small>
+          <small>Deixe uma linha em branco entre um parágrafo e outro. Use os botões acima para destacar trechos e inserir links, imagens e vídeos.</small>
+        </div>
+        <div class="campo">
+          <span class="campo__rotulo" id="rotulo-previa">Prévia do texto</span>
+          <div class="previa-texto leitura__texto" id="previa-texto" aria-labelledby="rotulo-previa"></div>
         </div>
         <div class="campo">
           <label for="campo-imagem">Imagem de capa (opcional)</label>
@@ -98,6 +110,62 @@
       </form>
     </section>
   </main>
+
+  <dialog class="dialogo" id="dialogo-link" aria-labelledby="titulo-dialogo-link">
+    <form method="dialog" id="form-link" novalidate>
+      <h2 id="titulo-dialogo-link">Inserir link</h2>
+      <div class="campo">
+        <label for="campo-link-url">Endereço do link</label>
+        <input type="text" id="campo-link-url" inputmode="url" placeholder="https://" autocomplete="off">
+        <small>Se houver texto selecionado, ele vira o link.</small>
+      </div>
+      <p class="dialogo__erro" id="erro-link" role="alert" hidden></p>
+      <div class="linha-acoes">
+        <button class="botao botao--azul" type="submit">Inserir</button>
+        <button class="botao botao--contorno" type="button" data-fechar>Cancelar</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog class="dialogo" id="dialogo-imagem" aria-labelledby="titulo-dialogo-imagem">
+    <form method="dialog" id="form-imagem" novalidate>
+      <h2 id="titulo-dialogo-imagem">Inserir imagem</h2>
+      <div class="campo">
+        <label for="campo-corpo-arquivo">Enviar do computador ou celular</label>
+        <input type="file" id="campo-corpo-arquivo" accept="image/jpeg,image/png,image/webp">
+        <small>JPG, PNG ou WebP. A imagem é reduzida e enviada ao site agora.</small>
+      </div>
+      <div class="campo">
+        <label for="campo-corpo-url">Ou endereço de uma imagem na internet</label>
+        <input type="text" id="campo-corpo-url" inputmode="url" placeholder="https://" autocomplete="off">
+      </div>
+      <div class="campo">
+        <label for="campo-corpo-descricao">Descrição da imagem</label>
+        <input type="text" id="campo-corpo-descricao" maxlength="200" autocomplete="off">
+        <small>Aparece como legenda e ajuda quem usa leitor de tela.</small>
+      </div>
+      <p class="dialogo__erro" id="erro-imagem" role="alert" hidden></p>
+      <div class="linha-acoes">
+        <button class="botao botao--azul" type="submit" id="botao-inserir-imagem">Inserir</button>
+        <button class="botao botao--contorno" type="button" data-fechar>Cancelar</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog class="dialogo" id="dialogo-video" aria-labelledby="titulo-dialogo-video">
+    <form method="dialog" id="form-video" novalidate>
+      <h2 id="titulo-dialogo-video">Inserir vídeo</h2>
+      <div class="campo">
+        <label for="campo-video-url">Link do vídeo no YouTube ou Vimeo</label>
+        <input type="text" id="campo-video-url" inputmode="url" placeholder="https://www.youtube.com/watch?v=..." autocomplete="off">
+      </div>
+      <p class="dialogo__erro" id="erro-video" role="alert" hidden></p>
+      <div class="linha-acoes">
+        <button class="botao botao--azul" type="submit">Inserir</button>
+        <button class="botao botao--contorno" type="button" data-fechar>Cancelar</button>
+      </div>
+    </form>
+  </dialog>
 
   <script type="module" src="../js/admin.js"></script>
 </body>
