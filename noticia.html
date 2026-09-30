@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Notícia · Jornal FA News</title>
+  <meta name="theme-color" content="#0047ab">
+  <link rel="icon" type="image/png" href="assets/icone.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body data-pagina="leitura">
+  <a class="pular" href="#conteudo">Pular para o conteúdo</a>
+
+  <header class="menu">
+    <div class="container menu__interno">
+      <a class="menu__logo" href="./" aria-label="Jornal FA News, página inicial">
+        <img src="assets/logo-jornal.png" alt="Jornal FA News">
+      </a>
+      <button class="menu__botao" type="button" aria-expanded="false" aria-controls="menu-lista">
+        <span class="menu__barras" aria-hidden="true"></span>
+        <span class="sr-only">Abrir ou fechar o menu</span>
+      </button>
+      <nav aria-label="Principal">
+        <ul class="menu__lista" id="menu-lista">
+          <li><a href="./#inicio">Início</a></li>
+          <li><a href="./#noticias">Notícias</a></li>
+          <li><a href="./#videos">Vídeos</a></li>
+          <li><a href="./#equipe">Equipe</a></li>
+          <li><a href="./#patrocine">Patrocine</a></li>
+          <li><a href="./#contato">Contato</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main id="conteudo">
+    <article class="container leitura" id="leitura" aria-live="polite">
+      <p class="aviso">Carregando notícia…</p>
+    </article>
+  </main>
+
+  <footer class="rodape">
+    <div class="container">
+      <div class="rodape__grade">
+        <img class="rodape__logo" src="assets/logo-escola.png" alt="Brasão da escola Félix de Azevedo">
+        <div>
+          <p class="rodape__nome">Félix de Azevedo</p>
+          <p>Jornal FA News, o jornal interno da escola.</p>
+        </div>
+      </div>
+      <p class="rodape__credito">Desenvolvido por <a href="https://www.isaacpaiva.com.br/" target="_blank" rel="noopener noreferrer">Isaac Paiva</a></p>
+    </div>
+  </footer>
+
+  <script type="module" src="js/main.js"></script>
+  <script type="module" src="js/noticias.js"></script>
+</body>
+</html>
