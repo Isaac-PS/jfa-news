@@ -1,8 +1,28 @@
 {
   "membros": [
-    { "nome": "Maria Exemplo", "funcao": "Apresentadora", "bio": "Mini bio de exemplo. Troque pelo texto real da integrante.", "foto": null },
-    { "nome": "João Exemplo", "funcao": "Repórter", "bio": "Mini bio de exemplo. Troque pelo texto real do integrante.", "foto": null },
-    { "nome": "Ana Exemplo", "funcao": "Edição de vídeo", "bio": "Mini bio de exemplo. Troque pelo texto real da integrante.", "foto": null },
-    { "nome": "Pedro Exemplo", "funcao": "Coordenação", "bio": "Mini bio de exemplo. Troque pelo texto real do integrante.", "foto": null }
+    {
+      "nome": "Micaelle",
+      "funcao": "Co-criadora do JFA",
+      "bio": "Me chamo Micaelle, sou aluna da segunda série e cocriadora do JFA, sou repórter de campo. Comecei a me envolver com comunicação desde muito pequena e fico muito feliz em conseguir fazer parte disso.\nNas horas vagas estudo italiano e vou ao jiu-jitsu.",
+      "foto": "assets/equipe/micaelle.jpg"
+    },
+    {
+      "nome": "Lívia",
+      "funcao": "Integrante da equipe",
+      "bio": "Mini bio de exemplo. Troque pelo texto real da integrante.",
+      "foto": "assets/equipe/livia.jpg"
+    },
+    {
+      "nome": "João Vitor",
+      "funcao": "Integrante da equipe",
+      "bio": "Mini bio de exemplo. Troque pelo texto real do integrante.",
+      "foto": null
+    },
+    {
+      "nome": "Pedro Exemplo",
+      "funcao": "Coordenação",
+      "bio": "Mini bio de exemplo. Troque pelo texto real do integrante.",
+      "foto": null
+    }
   ]
 }
