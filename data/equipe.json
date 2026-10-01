@@ -7,22 +7,16 @@
       "foto": "assets/equipe/micaelle.jpg"
     },
     {
-      "nome": "Lívia",
-      "funcao": "Integrante da equipe",
-      "bio": "Mini bio de exemplo. Troque pelo texto real da integrante.",
+      "nome": "Ana Lívia",
+      "funcao": "Criadora do JFA",
+      "bio": "Me chamo Ana Lívia, sou aluna da segunda série e criadora do JFA, onde atuo como editora, produtora e repórter. Sou apaixonada por comunicação e criatividade e, nas horas vagas, gosto de tocar violão e conversar em inglês. Também estou sempre buscando novas ideias e formas de transformar minha criatividade em projetos.",
       "foto": "assets/equipe/livia.jpg"
     },
     {
       "nome": "João Vitor",
-      "funcao": "Integrante da equipe",
-      "bio": "Mini bio de exemplo. Troque pelo texto real do integrante.",
-      "foto": null
-    },
-    {
-      "nome": "Pedro Exemplo",
-      "funcao": "Coordenação",
-      "bio": "Mini bio de exemplo. Troque pelo texto real do integrante.",
-      "foto": null
+      "funcao": "Repórter no JFA",
+      "bio": "Me chamo João Vitor, sou aluno da terceira série no Félix de Azevedo e repórter no JFA. Junto a isso, participo da comissão geral dos terceiros anos, também sendo líder de sala e nas horas vagas realizo entrevistas para podcast, como por exemplo, o podcast Vozes do instituto reaver",
+      "foto": "assets/equipe/joao-vitor.jpg"
     }
   ]
 }
