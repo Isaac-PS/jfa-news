@@ -97,8 +97,9 @@ h1, h2, h3 { font-family: var(--fonte-titulo); line-height: 1.15; margin: 0 0 0.
 .hero__grade { display: grid; gap: 40px; align-items: center; }
 @media (min-width: 860px) { .hero__grade { grid-template-columns: 1.2fr 0.8fr; } }
 .hero__selo { display: inline-block; margin-bottom: 16px; padding: 6px 14px; border-radius: 999px; background: var(--amarelo); color: var(--azul-profundo); font-family: var(--fonte-titulo); font-weight: 700; font-size: 0.8rem; letter-spacing: 0.08em; text-transform: uppercase; }
-.hero h1 { font-size: clamp(2rem, 5vw, 3.4rem); font-weight: 800; }
+.hero h1 { font-size: clamp(1.75rem, 4.4vw, 3rem); font-weight: 800; }
 .hero h1 span { color: var(--azul); }
+.hero h1 .sem-quebra { color: inherit; white-space: nowrap; }
 .hero__texto { max-width: 56ch; font-size: 1.15rem; color: var(--texto-suave); }
 .hero__acoes { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 24px; }
 .hero__arte { justify-self: center; width: min(78%, 360px); }
