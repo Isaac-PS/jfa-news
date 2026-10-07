@@ -33,8 +33,8 @@
       "autor": "Equipe FA News",
       "data": "2026-09-22",
       "resumo": "Outro exemplo de notícia, só para preencher a lista enquanto o jornal não publica as reais.",
-      "texto": "Mais um texto de exemplo. Ele será substituído pelas notícias que a equipe do jornal publicar pelo painel.",
-      "imagem": null
+      "texto": "## Mais um texto de exemplo. Ele será substituído pelas notícias que a equipe do jornal publicar pelo painel.\n\n**texto em negrito**\n\n*texto em itálico*\n\n[https://www.youtube.com](https://www.youtube.com)\n\n![](https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSa4eTAkhpdKu2k8hw-N92FxeNcs0Gi3BwLsgfbgMZKgQ&s=10)\n\nhttps://youtu.be/Wsl7D9Ey7oc?si=GUW4q0b48Pvvmjmt",
+      "imagem": "assets/noticias/2026-09-22-exemplo-campeonato-interclasse.jpg"
     }
   ]
 }
