@@ -61,3 +61,16 @@
 .dialogo input[type="text"] { width: 100%; padding: 12px 14px; border: 2px solid #ccd3e0; border-radius: 10px; font: inherit; }
 .dialogo input[type="text"]:focus { border-color: var(--azul); outline: 3px solid transparent; box-shadow: 0 0 0 3px rgba(0, 71, 171, 0.2); }
 .dialogo__erro { margin: 0 0 12px; color: var(--erro); font-weight: 600; }
+
+.abas { display: flex; gap: 8px; max-width: 960px; margin: 24px auto 0; }
+.abas__botao { padding: 10px 20px; border: 2px solid transparent; border-radius: 999px; background: transparent; color: var(--azul-profundo); font: inherit; font-weight: 700; cursor: pointer; }
+.abas__botao:hover { background: rgba(0, 71, 171, 0.08); }
+.abas__botao[aria-current="page"] { background: var(--azul); color: var(--branco); }
+.abas[hidden] { display: none; }
+
+.item-admin__pessoa { display: flex; align-items: center; gap: 14px; min-width: 0; }
+.item-admin__foto { flex: none; width: 48px; height: 48px; border: 2px solid var(--amarelo); border-radius: 50%; object-fit: cover; background: var(--azul); }
+.item-admin__foto--iniciais { display: grid; place-items: center; color: var(--amarelo); font-family: var(--fonte-titulo); font-weight: 800; }
+.previa-foto { width: 140px; height: 140px; margin-top: 8px; border: 4px solid var(--amarelo); border-radius: 50%; object-fit: cover; }
+.campo input[type="range"] { width: 100%; accent-color: var(--azul); }
+.botao--seta { min-width: 44px; padding-inline: 0; font-size: 1.15rem; line-height: 1; }

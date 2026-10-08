@@ -31,6 +31,7 @@ async function lerCorpo(req) {
 }
 
 arquivos.set('data/noticias.json', await readFile(path.join(raiz, 'data', 'noticias.json')));
+arquivos.set('data/equipe.json', await readFile(path.join(raiz, 'data', 'equipe.json')));
 
 createServer(async (req, res) => {
   try {
@@ -48,6 +49,7 @@ createServer(async (req, res) => {
       return responder(res, 200, {
         caminhos: [...arquivos.keys()],
         noticias: JSON.parse(arquivos.get('data/noticias.json').toString('utf8')),
+        equipe: JSON.parse(arquivos.get('data/equipe.json').toString('utf8')),
       });
     }
     if (url.pathname === '/__conflito') {

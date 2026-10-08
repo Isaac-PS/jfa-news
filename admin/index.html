@@ -26,6 +26,11 @@
   <main class="container">
     <div class="mensagem-area" id="mensagem" role="status" aria-live="polite"></div>
 
+    <nav class="abas" id="abas" aria-label="Seções do painel" hidden>
+      <button type="button" class="abas__botao" data-aba="lista">Notícias</button>
+      <button type="button" class="abas__botao" data-aba="equipe">Equipe</button>
+    </nav>
+
     <section class="painel" id="tela-login">
       <h1>Entrar</h1>
       <p class="painel__ajuda">
@@ -106,6 +111,51 @@
         <div class="linha-acoes">
           <button class="botao botao--azul" type="submit" id="botao-publicar">Publicar</button>
           <button class="botao botao--contorno" type="button" id="botao-cancelar">Cancelar</button>
+        </div>
+      </form>
+    </section>
+    <section class="painel painel--largo" id="tela-equipe" hidden>
+      <div class="painel__cabeca">
+        <h1>Equipe</h1>
+        <button class="botao botao--azul" type="button" id="botao-novo-membro">Novo integrante</button>
+      </div>
+      <ul class="lista-admin" id="lista-equipe"></ul>
+    </section>
+
+    <section class="painel" id="tela-form-equipe" hidden>
+      <h1 id="titulo-form-equipe">Novo integrante</h1>
+      <form id="form-equipe" novalidate>
+        <div class="campo">
+          <label for="campo-membro-nome">Nome</label>
+          <input type="text" id="campo-membro-nome" maxlength="80" autocomplete="off">
+        </div>
+        <div class="campo">
+          <label for="campo-membro-funcao">Função</label>
+          <input type="text" id="campo-membro-funcao" maxlength="80" autocomplete="off" placeholder="Ex.: Repórter, Edição de vídeo">
+        </div>
+        <div class="campo">
+          <label for="campo-membro-bio">Mini bio (opcional)</label>
+          <textarea id="campo-membro-bio" rows="6" aria-describedby="contador-bio"></textarea>
+          <span class="contador" id="contador-bio">0/600</span>
+        </div>
+        <div class="campo">
+          <label for="campo-membro-foto">Foto (opcional)</label>
+          <input type="file" id="campo-membro-foto" accept="image/jpeg,image/png,image/webp">
+          <small>JPG, PNG ou WebP. A foto é recortada em quadrado e aparece em círculo no site. Sem foto, o site mostra as iniciais.</small>
+          <img class="previa-foto" id="previa-foto-membro" alt="Prévia da foto do integrante" hidden>
+        </div>
+        <div class="campo" id="grupo-enquadramento" hidden>
+          <label for="campo-enquadramento">Enquadramento da foto</label>
+          <input type="range" id="campo-enquadramento" min="0" max="100" value="25">
+          <small>Arraste para ajustar até o rosto ficar bem centralizado na prévia.</small>
+        </div>
+        <div class="campo campo--linha" id="grupo-remover-foto" hidden>
+          <input type="checkbox" id="campo-remover-foto">
+          <label for="campo-remover-foto">Remover a foto atual</label>
+        </div>
+        <div class="linha-acoes">
+          <button class="botao botao--azul" type="submit" id="botao-salvar-membro">Salvar</button>
+          <button class="botao botao--contorno" type="button" id="botao-cancelar-membro">Cancelar</button>
         </div>
       </form>
     </section>

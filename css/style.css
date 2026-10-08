@@ -142,15 +142,15 @@ h1, h2, h3 { font-family: var(--fonte-titulo); line-height: 1.15; margin: 0 0 0.
 .faixa :focus-visible, .rodape :focus-visible { outline-color: var(--amarelo); }
 
 /* ===== Equipe ===== */
-.grade-equipe { display: grid; gap: 24px; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); }
-.grade-equipe .aviso { grid-column: 1 / -1; }
-.membro { padding: 28px 20px; border-radius: var(--raio); background: var(--cinza-claro); text-align: center; }
+.grade-equipe { display: flex; flex-wrap: wrap; justify-content: center; gap: 24px; }
+.grade-equipe .aviso { flex-basis: 100%; }
+.membro { flex: 1 1 230px; max-width: 340px; padding: 28px 20px; border-radius: var(--raio); background: var(--cinza-claro); text-align: center; }
 .membro__foto, .membro__iniciais { width: 112px; height: 112px; margin: 0 auto 14px; border: 4px solid var(--amarelo); border-radius: 50%; background: var(--azul); }
 .membro__foto { object-fit: cover; }
 .membro__iniciais { display: grid; place-items: center; color: var(--amarelo); font-family: var(--fonte-titulo); font-weight: 800; font-size: 2rem; }
 .membro h3 { margin: 0; font-size: 1.1rem; }
 .membro__funcao { margin: 2px 0 10px; font-size: 0.9rem; font-weight: 700; color: var(--azul); }
-.membro__bio { margin: 0; font-size: 0.98rem; color: var(--texto-suave); }
+.membro__bio { margin: 0; font-size: 0.98rem; color: var(--texto-suave); white-space: pre-line; }
 
 /* ===== Patrocínio ===== */
 .patrocinio { padding: 64px 0; background: var(--amarelo); }

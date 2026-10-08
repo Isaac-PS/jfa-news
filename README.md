@@ -90,10 +90,10 @@ As três notícias que vêm no projeto são exemplos (título começa com "Exemp
 | O que | Onde |
 |---|---|
 | Texto de boas-vindas | `index.html`, parágrafo com a classe `hero__texto` |
-| Integrantes da equipe | `data/equipe.json` |
+| Integrantes da equipe | aba **Equipe** do painel (ou `data/equipe.json`) |
 | Links, WhatsApp, e-mail | `data/config.json` |
 
-**Equipe:** para cada integrante, edite `nome`, `funcao` e `bio`. Para usar foto, crie a pasta `assets/equipe/` (ela não vem com o projeto), coloque o arquivo nela (JPG, PNG ou WebP, de preferência quadrada e com menos de 500 KB) e escreva o caminho em `foto`, por exemplo `"foto": "assets/equipe/maria.jpg"`. Sem foto (`null`), o site mostra as iniciais.
+**Equipe:** use a aba **Equipe** do painel (`/admin/`). Lá você adiciona, edita, reordena (setas ↑ ↓) e exclui integrantes, com nome, função, mini bio e foto. A foto é recortada em quadrado no próprio navegador (um controle de **Enquadramento** deixa o rosto bem centralizado) e aparece em círculo no site. Sem foto, o site mostra as iniciais. Ao trocar ou remover uma foto, ou excluir o integrante, o painel apaga o arquivo antigo de `assets/equipe/`. Se preferir, `data/equipe.json` continua podendo ser editado à mão (`nome`, `funcao`, `bio` e `foto`, por exemplo `"foto": "assets/equipe/maria.jpg"`).
 
 **Contatos:** em `data/config.json`, troque `email` pelo e-mail real. O número do WhatsApp fica em `whatsapp` (só dígitos, com 55 e DDD) e `whatsappExibicao` (como aparece no site).
 
