@@ -5,6 +5,7 @@ import { publicarNoticia, excluirNoticiaPublicada, ErroValidacao, CAMINHO_JSON, 
 import { prepararImagem, validarArquivoImagem } from './lib/imagem.js';
 import { formatarData, dataIsoLocal, imagemValida } from './lib/formato.js';
 import { el, montar } from './lib/dom.js';
+import { iniciarEquipeAdmin } from './admin-equipe.js';
 import { envolver, prefixarLinha, inserirBloco, montarLink } from './lib/editor.js';
 import { renderizarTexto } from './lib/render-texto.js';
 import { linkSeguro, imagemSegura, videoIncorporado } from './lib/texto.js';
@@ -13,7 +14,8 @@ const CHAVE_TOKEN = 'fa-news-token';
 const AVISO_PUBLICACAO = 'O site será atualizado em cerca de 1 a 2 minutos.';
 
 const $ = (id) => document.getElementById(id);
-const telas = { login: $('tela-login'), lista: $('tela-lista'), form: $('tela-form') };
+const telas = { login: $('tela-login'), lista: $('tela-lista'), form: $('tela-form'), equipe: $('tela-equipe'), 'form-equipe': $('tela-form-equipe') };
+const ABA_DA_TELA = { lista: 'lista', form: 'lista', equipe: 'equipe', 'form-equipe': 'equipe' };
 
 let config = null;
 let cliente = null;
@@ -23,7 +25,8 @@ let imagemPreparada = null; // { base64, previaUrl } da imagem escolhida no form
 let geracaoImagem = 0; // muda a cada escolha de imagem: descarta resultado de preparo que ficou velho
 let preparandoImagem = false; // true enquanto a imagem escolhida está sendo reduzida
 let publicando = false; // true enquanto o envio ao GitHub está em andamento
-let retomarFormulario = false; // após token recusado ao publicar, o próximo login volta ao formulário
+let retomarTela = null; // após token recusado ao salvar, o próximo login volta ao formulário que estava aberto
+let equipeAdmin = null;
 let enviandoImagemTexto = false; // true enquanto uma imagem do texto sobe para o GitHub
 const previasLocais = new Map(); // caminho no site → prévia das imagens enviadas nesta sessão (o site leva 1-2 min para servi-las)
 
@@ -58,6 +61,11 @@ function apagarToken() {
 function mostrarTela(nome) {
   for (const [chave, secao] of Object.entries(telas)) secao.hidden = chave !== nome;
   $('botao-sair').hidden = nome === 'login';
+  $('abas').hidden = nome === 'login';
+  for (const botao of document.querySelectorAll('[data-aba]')) {
+    if (botao.dataset.aba === ABA_DA_TELA[nome]) botao.setAttribute('aria-current', 'page');
+    else botao.removeAttribute('aria-current');
+  }
 }
 
 function mostrarMensagem(tipo, texto) {
@@ -287,7 +295,7 @@ async function aoEnviarImagemTexto(evento) {
       console.error(erro);
       if (erro instanceof ErroGitHub && erro.tipo === 'token') {
         $('dialogo-imagem').close();
-        retomarFormulario = true;
+        retomarTela = 'form';
         tratarErro(erro, 'O que você estava escrevendo foi mantido: entre de novo com um token com permissão de escrita.');
       } else {
         erroNoDialogo('imagem', erro instanceof ErroGitHub ? textoDoErro(erro) : 'Não foi possível enviar esta imagem. Tente de novo.');
@@ -403,7 +411,7 @@ async function aoEnviarFormulario(evento) {
   } catch (erro) {
     if (erro instanceof ErroGitHub && erro.tipo === 'token') {
       // Token sem permissão de escrita: o formulário não é tocado, e o próximo login volta a ele.
-      retomarFormulario = true;
+      retomarTela = 'form';
       tratarErro(erro, 'O que você estava escrevendo foi mantido: entre de novo com um token com permissão de escrita para publicar.');
     } else {
       tratarErro(erro);
@@ -421,8 +429,8 @@ async function entrar(token) {
   await novo.validarAcesso();
   cliente = novo;
   await recarregarLista();
-  mostrarTela(retomarFormulario ? 'form' : 'lista');
-  retomarFormulario = false;
+  mostrarTela(retomarTela ?? 'lista');
+  retomarTela = null;
 }
 
 async function aoEnviarLogin(evento) {
@@ -450,7 +458,7 @@ function sair() {
   apagarToken();
   cliente = null;
   lista = [];
-  retomarFormulario = false; // logout explícito: o rascunho não volta (abrirFormulario limpa tudo)
+  retomarTela = null; // logout explícito: o rascunho não volta (abrirFormulario limpa tudo)
   limparMensagem();
   mostrarTela('login');
 }
@@ -468,6 +476,23 @@ async function iniciar() {
     mostrarTela('lista');
   });
   $('botao-sair').addEventListener('click', sair);
+  equipeAdmin = iniciarEquipeAdmin({
+    cliente: () => cliente,
+    mostrarTela,
+    mostrarMensagem,
+    limparMensagem,
+    tratarErro,
+    retomarNaTela: (nome) => { retomarTela = nome; },
+  });
+  $('abas').addEventListener('click', (evento) => {
+    const botao = evento.target.closest('[data-aba]');
+    if (!botao) return;
+    if (botao.dataset.aba === 'equipe') equipeAdmin.abrirLista();
+    else {
+      limparMensagem();
+      mostrarTela('lista');
+    }
+  });
   mostrarTela('login');
 
   try {

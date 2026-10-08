@@ -65,14 +65,17 @@ function aplicarConfig(config) {
 }
 
 function criarMembro(membro) {
+  const iniciaisNo = () => el('div', { class: 'membro__iniciais', 'aria-hidden': 'true', text: iniciais(membro.nome) });
   const foto = imagemValida(membro.foto, 'assets/equipe/')
     ? el('img', { class: 'membro__foto', src: membro.foto, alt: `Foto de ${membro.nome}`, loading: 'lazy' })
-    : el('div', { class: 'membro__iniciais', 'aria-hidden': 'true', text: iniciais(membro.nome) });
+    : iniciaisNo();
+  // Foto citada no JSON mas ainda não publicada: mostra as iniciais em vez da imagem quebrada.
+  if (foto.tagName === 'IMG') foto.addEventListener('error', () => foto.replaceWith(iniciaisNo()), { once: true });
   return el('article', { class: 'membro' },
     foto,
     el('h3', { text: membro.nome }),
     el('p', { class: 'membro__funcao', text: membro.funcao }),
-    el('p', { class: 'membro__bio', text: membro.bio }),
+    membro.bio ? el('p', { class: 'membro__bio', text: membro.bio }) : null,
   );
 }
 
